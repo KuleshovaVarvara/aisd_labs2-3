@@ -1,0 +1,13 @@
+# Папки Visual Studio и временные файлы
+.vs/
+x64/
+Debug/
+Release/
+*.user
+*.suo
+*.obj
+*.pdb
+*.ilk
+*.tlog
+*.log
+*.idb
