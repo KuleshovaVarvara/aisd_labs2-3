@@ -2,23 +2,21 @@
 import LinkedList;
 
 int main() {
-    LinkedList<int> list;
-    list.push_tail(10);
-    list.push_head(5);
-    list.push_tail(20);
+    LinkedList<int> list1;
+    list1.push_tail(10);
+    list1.push_tail(20);
 
-    std::cout << "List: " << list << std::endl;
-    std::cout << "Size: " << list.get_size() << std::endl;
-    std::cout << "Element at index 1: " << list[1] << std::endl;
+    std::cout << "List1: " << list1 << std::endl;
 
-    list[1] = 99; // Меняем значение
-    std::cout << "After list[1] = 99: " << list << std::endl;
+    // Тест
+    LinkedList<int> list2 = list1;
+    std::cout << "List2 (copy of List1): " << list2 << std::endl;
 
-    list.pop_head();
-    std::cout << "After pop_head: " << list << std::endl;
-
-    list.pop_tail();
-    std::cout << "After pop_tail: " << list << std::endl;
+    // Тест 
+    LinkedList<int> list3;
+    list3.push_tail(99);
+    list3 = list1;
+    std::cout << "List3 (assigned List1): " << list3 << std::endl;
 
     return 0;
 }

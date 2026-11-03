@@ -21,7 +21,39 @@ private:
 public:
     LinkedList() : head(nullptr), tail(nullptr), size(0) {}
 
-    ~LinkedList() {}
+    // Конструктор копирования 
+    LinkedList(const LinkedList& other) : head(nullptr), tail(nullptr), size(0) {
+        Node<T>* current = other.head;
+        while (current != nullptr) {
+            push_tail(current->data);
+            current = current->next;
+        }
+    }
+
+    // Оператор присваивания 
+    LinkedList& operator=(const LinkedList& other) {
+        if (this == &other) return *this; 
+
+        // 1. Очищаем текущий список
+        while (head != nullptr) {
+            pop_head();
+        }
+
+        // 2. Копируем элементы из другого списка
+        Node<T>* current = other.head;
+        while (current != nullptr) {
+            push_tail(current->data);
+            current = current->next;
+        }
+        return *this;
+    }
+
+    // Деструктор 
+    ~LinkedList() {
+        while (head != nullptr) {
+            pop_head();
+        }
+    }
 
     int get_size() const {
         return size;
@@ -144,5 +176,24 @@ public:
         }
         os << " ]";
         return os;
+    }
+
+    // Добавление другого списка в конец текущего
+    void push_tail(const LinkedList<T>& other) {
+        Node<T>* current = other.head;
+        while (current != nullptr) {
+            push_tail(current->data);
+            current = current->next;
+        }
+    }
+
+    // Добавление другого списка в начало текущего
+    void push_head(const LinkedList<T>& other) {
+        // Идем с конца другого списка, чтобы сохранить правильный порядок
+        Node<T>* current = other.tail;
+        while (current != nullptr) {
+            push_head(current->data); 
+            current = current->prev;
+        }
     }
 };
