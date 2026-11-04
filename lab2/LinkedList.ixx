@@ -169,11 +169,21 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const LinkedList<T>& list) {
         os << "[ ";
         Node<T>* current = list.head;
-        while (current != nullptr) {
+        int count = 0;
+
+        // Выводим ровно size элементов, чтобы не зависнуть при цикле
+        while (current != nullptr && count < list.size) {
             os << current->data;
-            if (current->next != nullptr) os << " <-> ";
+            if (count < list.size - 1) os << " <-> ";
             current = current->next;
+            count++;
         }
+
+        // Если после вывода size элементов current всё ещё не nullptr - значит, есть цикл
+        if (current != nullptr) {
+            os << " <-> ... (cycle detected)";
+        }
+
         os << " ]";
         return os;
     }
@@ -196,4 +206,52 @@ public:
             current = current->prev;
         }
     }
+
+    // Конструктор случайных значений 
+    LinkedList(int count, T min, T max) : head(nullptr), tail(nullptr), size(0) {
+        if (count < 0) throw std::invalid_argument("Count cannot be negative");
+        if (min > max) throw std::invalid_argument("Min cannot be greater than max");
+
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+
+        if constexpr (std::is_integral<T>::value) {
+            std::uniform_int_distribution<T> dist(min, max);
+            for (int i = 0; i < count; i++) {
+                push_tail(dist(gen));
+            }
+        }
+        else if constexpr (std::is_floating_point<T>::value) {
+            std::uniform_real_distribution<T> dist(min, max);
+            for (int i = 0; i < count; i++) {
+                push_tail(dist(gen));
+            }
+        }
+    }
+
+    // Метод для получения головы списка (нужен для внешних функций)
+    Node<T>* get_head() const {
+        return head;
+    }
+
 };
+
+// Задача 1
+export template <typename T>
+bool has_cycle(const LinkedList<T>& list) {
+    // Получаем голову через публичный метод
+    Node<T>* slow = list.get_head();
+    Node<T>* fast = list.get_head();
+
+    if (slow == nullptr) return false;
+
+    while (fast != nullptr && fast->next != nullptr) {
+        slow = slow->next;
+        fast = fast->next->next;
+
+        if (slow == fast) {
+            return true; // Есть цикл
+        }
+    }
+    return false; // Нет цикла
+}
