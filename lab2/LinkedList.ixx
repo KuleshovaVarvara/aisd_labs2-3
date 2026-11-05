@@ -21,7 +21,6 @@ private:
 public:
     LinkedList() : head(nullptr), tail(nullptr), size(0) {}
 
-    // Конструктор копирования 
     LinkedList(const LinkedList& other) : head(nullptr), tail(nullptr), size(0) {
         Node<T>* current = other.head;
         while (current != nullptr) {
@@ -30,13 +29,12 @@ public:
         }
     }
 
-    // Оператор присваивания 
     LinkedList& operator=(const LinkedList& other) {
-        if (this == &other) return *this; 
+        if (this == &other) return *this;
 
         // 1. Очищаем текущий список
         while (head != nullptr) {
-            pop_head();
+            pop_heads();
         }
 
         // 2. Копируем элементы из другого списка
@@ -48,10 +46,9 @@ public:
         return *this;
     }
 
-    // Деструктор 
     ~LinkedList() {
         while (head != nullptr) {
-            pop_head();
+            pop_heads();
         }
     }
 
@@ -89,8 +86,8 @@ public:
         size++;
     }
 
-    // Удаление элемента из начала списка
-    void pop_head() {
+    // Удаление элемента из начала списка 
+    void pop_heads() {
         if (head == nullptr) return;
         Node<T>* temp = head;
         head = head->next;
@@ -105,7 +102,7 @@ public:
     }
 
     // Удаление элемента из конца списка
-    void pop_tail() {
+    void pop_tails() {
         if (tail == nullptr) return;
         Node<T>* temp = tail;
         tail = tail->prev;
@@ -141,7 +138,6 @@ public:
         }
     }
 
-    // Доступ по индексу
     T& operator[](int index) {
         if (index < 0 || index >= size) {
             throw std::out_of_range("Index out of range");
@@ -153,7 +149,6 @@ public:
         return current->data;
     }
 
-    // Доступ по индексу 
     const T& operator[](int index) const {
         if (index < 0 || index >= size) {
             throw std::out_of_range("Index out of range");
@@ -165,7 +160,6 @@ public:
         return current->data;
     }
 
-    // Вывод списка на печать
     friend std::ostream& operator<<(std::ostream& os, const LinkedList<T>& list) {
         os << "[ ";
         Node<T>* current = list.head;
@@ -202,18 +196,17 @@ public:
         // Идем с конца другого списка, чтобы сохранить правильный порядок
         Node<T>* current = other.tail;
         while (current != nullptr) {
-            push_head(current->data); 
+            push_head(current->data);
             current = current->prev;
         }
     }
 
-    // Конструктор случайных значений 
     LinkedList(int count, T min, T max) : head(nullptr), tail(nullptr), size(0) {
         if (count < 0) throw std::invalid_argument("Count cannot be negative");
         if (min > max) throw std::invalid_argument("Min cannot be greater than max");
 
-        static std::random_device rd;
-        static std::mt19937 gen(rd());
+        // Использование seed для генератора 
+        std::mt19937 gen(std::random_device{}());
 
         if constexpr (std::is_integral<T>::value) {
             std::uniform_int_distribution<T> dist(min, max);
@@ -233,13 +226,11 @@ public:
     Node<T>* get_head() const {
         return head;
     }
-
 };
 
-// Задача 1
+//Задача 1 
 export template <typename T>
 bool has_cycle(const LinkedList<T>& list) {
-    // Получаем голову через публичный метод
     Node<T>* slow = list.get_head();
     Node<T>* fast = list.get_head();
 
